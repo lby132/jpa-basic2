@@ -16,13 +16,19 @@ public class JpaMain {
         tx.begin();
 
         try {
-//            Member findMember = em.find(Member.class, 1L);
-            Member member = new Member();
-            member.setName("jpa");
+            System.out.println("==========");
 
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setTeamId(team.getId());
             em.persist(member);
 
             tx.commit();
+            System.out.println("==========");
         } catch (Exception e) {
             tx.rollback();
         } finally {
