@@ -1,10 +1,11 @@
 package hellojpa;
 
+import org.hibernate.Hibernate;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
 
 public class JpaMain {
 
@@ -18,29 +19,53 @@ public class JpaMain {
 
         try {
 
-            Team team = new Team();
-            team.setName("team1");
-            em.persist(team);
-
             Member member = new Member();
             member.setUsername("member1");
-            member.changTeam(team);
             em.persist(member);
 
-            team.addMember(member);
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            em.persist(member2);
 
-            Member findTeam = em.find(Member.class, member.getId());
-            List<Member> members = findTeam.getTeam().getMembers();
+            em.flush();
+            em.clear();
 
-            System.out.println("members = " + findTeam);
+            Member refMember = em.getReference(Member.class, member.getId());
+            System.out.println("refMember = " + refMember.getClass());  //Proxy
+
+            Member findMember = em.find(Member.class, member.getId());
+            System.out.println("findMember = " + findMember.getClass());   //Member
+
+            System.out.println("findMember == refMember :" + (findMember == refMember));
+//
+//            Member m1 = em.find(Member.class, member.getId());
+//            Member m2 = em.getrefMember(Member.class, member2.getId());
+//
+//            logic(m1, m2);
+
+            // refMember의 프록시가 초기화 되었는지 확인함.
+            System.out.println("isLoaded = "+ emf.getPersistenceUnitUtil().isLoaded(refMember));
+            Hibernate.initialize(refMember); // 강제 초기화
 
             tx.commit();
-            System.out.println("==========");
         } catch (Exception e) {
             tx.rollback();
         } finally {
             em.close();
         }
-        emf.close();
+         emf.close();
+    }
+
+    private static void logic(Member m1, Member m2) {
+        System.out.println("m1 == m2 = " + (m1 instanceof Member));
+        System.out.println("m1 == m2 = " + (m2 instanceof Member));
+    }
+
+    private static void printMemberAndTeam(Member member) {
+        String username = member.getUsername();
+        System.out.println("username = " + username);
+
+        Team team = member.getTeam();
+        System.out.println("team = " + team);
     }
 }

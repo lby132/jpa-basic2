@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "TEAM")
 @Data
 @ToString
-public class Team {
+public class Team extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -19,10 +20,10 @@ public class Team {
 
     private String name;
 
-    public void addMember(Member member) {
-        member.setTeam(this);
-        members.add(member);
-    }
+//    public void addMember(Member member) {
+//        member.setTeam(this);
+//        members.add(member);
+//    }
 
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();

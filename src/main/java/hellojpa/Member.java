@@ -4,12 +4,15 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "MEMBER")
 @Data
 @ToString
-public class Member {
+public class  Member extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -23,8 +26,15 @@ public class Member {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
-    public void changTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
-    }
+//    @OneToOne
+//    @JoinColumn(name = "LOCKER_ID")
+//    private Locker locker;
+//
+//    @OneToMany(mappedBy = "member")
+//    private List<MemberProduct> memberProducts = new ArrayList<>();
+
+//    public void changTeam(Team team) {
+//        this.team = team;
+//        team.getMembers().add(this);
+//    }
 }
