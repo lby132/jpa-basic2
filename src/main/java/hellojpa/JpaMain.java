@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
 
@@ -19,35 +20,25 @@ public class JpaMain {
 
         try {
 
-            Member member = new Member();
-            member.setUsername("member1");
-            em.persist(member);
+            Child child1 = new Child();
+            Child child2 = new Child();
 
-            Member member2 = new Member();
-            member2.setUsername("member2");
-            em.persist(member2);
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+            em.persist(parent);
+            em.persist(child1);
+            em.persist(child2);
 
             em.flush();
             em.clear();
 
-            Member refMember = em.getReference(Member.class, member.getId());
-            System.out.println("refMember = " + refMember.getClass());  //Proxy
-
-            Member findMember = em.find(Member.class, member.getId());
-            System.out.println("findMember = " + findMember.getClass());   //Member
-
-            System.out.println("findMember == refMember :" + (findMember == refMember));
-//
-//            Member m1 = em.find(Member.class, member.getId());
-//            Member m2 = em.getrefMember(Member.class, member2.getId());
-//
-//            logic(m1, m2);
-
-            // refMember의 프록시가 초기화 되었는지 확인함.
-            System.out.println("isLoaded = "+ emf.getPersistenceUnitUtil().isLoaded(refMember));
-            Hibernate.initialize(refMember); // 강제 초기화
+            Parent parent1 = em.find(Parent.class, parent.getId());
+            em.remove(parent1);
 
             tx.commit();
+
         } catch (Exception e) {
             tx.rollback();
         } finally {
